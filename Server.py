@@ -1,7 +1,7 @@
 import socket
   
 # take the server name and port name
-host = 'local host'
+host = 'localhost'
 port = 5000
   
 # create a socket at server side
@@ -11,7 +11,8 @@ s = socket.socket(socket.AF_INET,
   
 # bind the socket with server
 # and port number
-s.bind(('', port))
+print("LISTENING ON", host + ":" + str(port))
+s.bind((host, port))
   
 # allow maximum 1 connection to
 # the socket
