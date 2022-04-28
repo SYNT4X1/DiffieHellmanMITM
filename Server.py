@@ -1,33 +1,35 @@
 import socket
-  
-# take the server name and port name
-host = 'localhost'
-port = 5000
-  
-# create a socket at server side
-# using TCP / IP protocol
-s = socket.socket(socket.AF_INET,
-                  socket.SOCK_STREAM)
-  
-# bind the socket with server
-# and port number
-print("LISTENING ON", host + ":" + str(port))
-s.bind((host, port))
-  
-# allow maximum 1 connection to
-# the socket
-s.listen(1)
-  
-# wait till a client accept
-# connection
-c, addr = s.accept()
-  
-# display client address
-print("CONNECTION FROM:", str(addr))
-  
-# send message to the client after
-# encoding into binary string
-c.send(b"Server Message")
-  
-# disconnect the server
-c.close()
+
+# Create a TCP/IP socket
+sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+# Bind the socket to the port
+server_address = ('localhost', 10000)
+print('Starting up on {} port {}'.format(*server_address))
+sock.bind(server_address)
+
+# Listen for incoming connections
+sock.listen(1)
+
+while True:
+    # Wait for a connection
+    print('waiting for a connection')
+    connection, client_address = sock.accept()
+    try:
+        print('connection from', client_address)
+
+        # Receive the data in small chunks and retransmit it
+        while True:
+            data = connection.recv(16)
+            print('received {!r}'.format(data))
+            if data:
+                print('sending data back to the client')
+                connection.sendall(data)
+            else:
+                print('no data from', client_address)
+                break
+
+    finally:
+        # Clean up the connection
+        print("Closing current connection")
+        connection.close()
