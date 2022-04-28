@@ -1,4 +1,5 @@
 import socket
+from random import randint
 
 # Create a TCP/IP socket
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -11,6 +12,11 @@ sock.bind(server_address)
 # Listen for incoming connections
 sock.listen(1)
 
+base = 1000
+print("Using base:", base)
+secret = randint(999, 9999)
+print("Server secret:", secret)
+
 while True:
     # Wait for a connection
     print('waiting for a connection')
@@ -20,11 +26,12 @@ while True:
 
         # Receive the data in small chunks and retransmit it
         while True:
-            data = connection.recv(16)
+            data = connection.recv(1024)
             print('received {!r}'.format(data))
             if data:
                 print('sending data back to the client')
-                connection.sendall(data)
+                connection.sendall(bytes(str(base * secret), 'ascii'))
+                print("Common secret:", int(data) * secret)
             else:
                 print('no data from', client_address)
                 break
